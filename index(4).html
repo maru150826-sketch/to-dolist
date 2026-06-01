@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Private ToDo Board</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d9dee8;
+      --accent: #2f6fed;
+      --accent-weak: #e7efff;
+      --danger: #c92a2a;
+      --warning: #f08c00;
+      --ok: #2b8a3e;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      padding: 28px 18px 18px;
+      background: linear-gradient(135deg, #172033, #2f6fed);
+      color: white;
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 4vw, 38px);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: rgba(255,255,255,0.84);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 18px 48px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 370px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin: 12px 0 6px;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(47,111,237,0.12);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.08s ease, opacity 0.15s ease;
+    }
+
+    button:hover { opacity: 0.92; }
+    button:active { transform: translateY(1px); }
+    button.secondary { background: var(--accent-weak); color: var(--accent); }
+    button.ghost { background: #eef1f6; color: var(--text); }
+    button.danger { background: #ffe3e3; color: var(--danger); }
+    button.ok { background: #e6f4ea; color: var(--ok); }
+    button.gold { background: #fff4d6; color: #8a5a00; }
+
+    .quick-add {
+      display: grid;
+      grid-template-columns: 1fr 125px 96px;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 760px) {
+      .quick-add { grid-template-columns: 1fr; }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 820px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat .num {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 140px 150px;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .toolbar { grid-template-columns: 1fr; }
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: white;
+    }
+
+    .task.urgent {
+      border-color: #ffc9c9;
+      background: #fffafa;
+    }
+
+    .task-title {
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      background: #eef1f6;
+      padding: 5px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge.overdue { background: #ffe3e3; color: var(--danger); }
+    .badge.today { background: #fff4d6; color: #8a5a00; }
+    .badge.done { background: #e6f4ea; color: var(--ok); }
+    .badge.high { background: #ffe8cc; color: #d9480f; }
+    .badge.remind { background: #e7efff; color: var(--accent); }
+
+    .progress-wrap {
+      margin: 12px 0 10px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #eef1f6;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      width: 0;
+      border-radius: 999px;
+    }
+
+    .task-memo {
+      color: var(--muted);
+      line-height: 1.65;
+      white-space: pre-wrap;
+      font-size: 13px;
+      margin: 8px 0 0;
+    }
+
+    .subtasks {
+      margin: 10px 0 0;
+      padding: 10px;
+      border-radius: 12px;
+      background: #fafbfe;
+      border: 1px solid #eef1f6;
+    }
+
+    .subtask {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .subtask input { width: auto; }
+    .subtask.done span {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .task-actions button {
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 26px 10px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: #fafbfe;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+      margin-top: 12px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tab-buttons button {
+      background: #eef1f6;
+      color: var(--text);
+    }
+
+    .tab-buttons button.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .danger-zone {
+      border-top: 1px solid var(--line);
+      margin-top: 16px;
+      padding-top: 14px;
+    }
+
+    .file-input { display: none; }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .feedback {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #172033;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      transform: translateY(120px);
+      opacity: 0;
+      transition: 0.25s ease;
+      z-index: 20;
+      max-width: 320px;
+      line-height: 1.6;
+      font-weight: 700;
+    }
+
+    .feedback.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>Private ToDo Board</h1>
+      <p class="subtitle">
+        素早い入力、タスク細分化、期限・リマインド、優先順位、完了フィードバックつきの個人用ToDo表。
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel" style="margin-bottom:18px;">
+      <h2>素早い入力</h2>
+      <div class="quick-add">
+        <input id="quickTitle" placeholder="例：レポートの構成を作る" />
+        <input id="quickDue" type="date" />
+        <button id="quickAddButton" type="button">追加</button>
+      </div>
+      <p class="small-note">細かい設定はあとから編集できます。まずは忘れないうちに入れるための欄です。</p>
+    </section>
+
+    <section class="stats" aria-label="達成状況">
+      <div class="stat"><div class="num" id="statTotal">0</div><div class="label">全タスク</div></div>
+      <div class="stat"><div class="num" id="statActive">0</div><div class="label">未完了</div></div>
+      <div class="stat"><div class="num" id="statToday">0</div><div class="label">今日まで</div></div>
+      <div class="stat"><div class="num" id="statDone">0</div><div class="label">完了済み</div></div>
+      <div class="stat"><div class="num" id="statRate">0%</div><div class="label">全体達成率</div></div>
+    </section>
+
+    <section class="grid">
+      <aside class="panel">
+        <h2 id="formTitle">タスクを追加</h2>
+        <form id="taskForm">
+          <input type="hidden" id="editingId" />
+
+          <label for="title">やること</label>
+          <input id="title" required placeholder="例：情報学入門の課題を提出する" />
+
+          <div class="row">
+            <div>
+              <label for="category">カテゴリ</label>
+              <select id="category">
+                <option>大学課題</option>
+                <option>PC作業</option>
+                <option>TOEIC</option>
+                <option>就活</option>
+                <option>筋トレ</option>
+                <option>生活</option>
+                <option>その他</option>
+              </select>
+            </div>
+            <div>
+              <label for="priority">優先度</label>
+              <select id="priority">
+                <option value="high">高</option>
+                <option value="normal" selected>中</option>
+                <option value="low">低</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="dueDate">期限</label>
+              <input id="dueDate" type="date" required />
+            </div>
+            <div>
+              <label for="dueTime">期限時刻</label>
+              <input id="dueTime" type="time" value="23:59" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="remindBefore">リマインド</label>
+              <select id="remindBefore">
+                <option value="0">なし</option>
+                <option value="60">1時間前</option>
+                <option value="180">3時間前</option>
+                <option value="1440" selected>1日前</option>
+                <option value="4320">3日前</option>
+                <option value="10080">1週間前</option>
+              </select>
+            </div>
+            <div>
+              <label for="status">状態</label>
+              <select id="status">
+                <option value="not_started">未着手</option>
+                <option value="doing">進行中</option>
+                <option value="done">完了</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="progress">進捗率：<span id="progressText">0%</span></label>
+          <input id="progress" type="range" min="0" max="100" step="5" value="0" />
+
+          <label for="subtasksText">タスクの細分化</label>
+          <textarea id="subtasksText" placeholder="1行に1つずつ入力&#10;例：資料を読む&#10;例：構成を作る&#10;例：提出前に見直す"></textarea>
+
+          <label for="memo">メモ</label>
+          <textarea id="memo" placeholder="例：提出先、必要な資料、細かい手順など"></textarea>
+
+          <div class="actions">
+            <button type="submit" id="saveButton">保存</button>
+            <button type="button" class="ghost" id="resetButton">リセット</button>
+            <button type="button" class="gold" id="notifyButton">通知を許可</button>
+          </div>
+
+          <p class="small-note">
+            期限は今日から1年先まで入力できます。通知はページを開いている時に動きます。
+          </p>
+        </form>
+
+        <div class="danger-zone">
+          <h2>データ管理</h2>
+          <div class="actions">
+            <button type="button" class="secondary" id="exportButton">JSON保存</button>
+            <button type="button" class="ghost" id="importButton">JSON読込</button>
+            <input type="file" id="importFile" class="file-input" accept="application/json" />
+          </div>
+          <p class="small-note">
+            PCを変える、ブラウザのデータを消す、スマホでも使いたい場合は、定期的にJSON保存してください。
+          </p>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="tab-buttons">
+          <button type="button" class="active" data-tab="today">今日やる</button>
+          <button type="button" data-tab="active">未完了</button>
+          <button type="button" data-tab="history">完了履歴</button>
+          <button type="button" data-tab="all">全件</button>
+        </div>
+
+        <div class="toolbar">
+          <input id="search" placeholder="検索：課題名・メモ・カテゴリ" />
+          <select id="filter">
+            <option value="all">すべて</option>
+            <option value="overdue">期限切れ</option>
+            <option value="today">今日まで</option>
+            <option value="week">7日以内</option>
+            <option value="month">30日以内</option>
+          </select>
+          <select id="sort">
+            <option value="dueAsc">期限が近い順</option>
+            <option value="priority">優先度順</option>
+            <option value="createdDesc">新しい順</option>
+            <option value="progressAsc">進捗が低い順</option>
+          </select>
+        </div>
+
+        <div id="taskList" class="task-list"></div>
+
+        <p class="footer-note">
+          GitHub Pagesに置くと、URLを知っている人はページを開けます。ただし、この設計ではタスクデータは各ブラウザ内に保存され、GitHubに自動送信されません。
+        </p>
+      </section>
+    </section>
+  </main>
+
+  <div id="feedback" class="feedback"></div>
+
+  <script>
+    const STORAGE_KEY = "privateTodoBoard.tasks.v2";
+    let tasks = [];
+    let currentTab = "today";
+    let notifiedKeys = new Set();
+
+    const $ = (id) => document.getElementById(id);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const maxDate = new Date(today);
+    maxDate.setFullYear(maxDate.getFullYear() + 1);
+
+    $("dueDate").min = formatDate(today);
+    $("dueDate").max = formatDate(maxDate);
+    $("dueDate").value = formatDate(today);
+    $("quickDue").min = formatDate(today);
+    $("quickDue").max = formatDate(maxDate);
+    $("quickDue").value = formatDate(today);
+
+    function formatDate(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function parseDate(value) {
+      const [y, m, d] = value.split("-").map(Number);
+      const date = new Date(y, m - 1, d);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+
+    function dueDateTime(task) {
+      return new Date(`${task.dueDate}T${task.dueTime || "23:59"}`);
+    }
+
+    function uid() {
+      return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+    }
+
+    function loadTasks() {
+      try {
+        tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        tasks = [];
+      }
+    }
+
+    function saveTasks() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      render();
+    }
+
+    function priorityRank(priority) {
+      return { high: 0, normal: 1, low: 2 }[priority] ?? 1;
+    }
+
+    function priorityLabel(priority) {
+      return { high: "優先度：高", normal: "優先度：中", low: "優先度：低" }[priority] ?? "優先度：中";
+    }
+
+    function statusLabel(status) {
+      return { not_started: "未着手", doing: "進行中", done: "完了" }[status] ?? "未着手";
+    }
+
+    function daysUntil(dueDate) {
+      const due = parseDate(dueDate);
+      return Math.round((due - today) / (1000 * 60 * 60 * 24));
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showFeedback(message) {
+      const box = $("feedback");
+      box.textContent = message;
+      box.classList.add("show");
+      setTimeout(() => box.classList.remove("show"), 2600);
+    }
+
+    function buildSubtasksFromText(text, oldSubtasks = []) {
+      const oldMap = new Map(oldSubtasks.map(s => [s.title, s.done]));
+      return text
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(title => ({ id: uid(), title, done: oldMap.get(title) || false }));
+    }
+
+    function subtaskProgress(subtasks) {
+      if (!subtasks || subtasks.length === 0) return null;
+      const done = subtasks.filter(s => s.done).length;
+      return Math.round((done / subtasks.length) * 100);
+    }
+
+    function resetForm() {
+      $("editingId").value = "";
+      $("formTitle").textContent = "タスクを追加";
+      $("saveButton").textContent = "保存";
+      $("title").value = "";
+      $("category").value = "大学課題";
+      $("priority").value = "normal";
+      $("dueDate").value = formatDate(today);
+      $("dueTime").value = "23:59";
+      $("remindBefore").value = "1440";
+      $("status").value = "not_started";
+      $("progress").value = 0;
+      $("progressText").textContent = "0%";
+      $("subtasksText").value = "";
+      $("memo").value = "";
+    }
+
+    function syncProgressAndStatus() {
+      const status = $("status").value;
+      if (status === "done") {
+        $("progress").value = 100;
+      } else if (status === "not_started" && Number($("progress").value) === 100) {
+        $("progress").value = 0;
+      }
+      $("progressText").textContent = `${$("progress").value}%`;
+    }
+
+    $("progress").addEventListener("input", () => {
+      $("progressText").textContent = `${$("progress").value}%`;
+      if (Number($("progress").value) === 100) $("status").value = "done";
+      else if (Number($("progress").value) > 0) $("status").value = "doing";
+      else $("status").value = "not_started";
+    });
+
+    $("status").addEventListener("change", syncProgressAndStatus);
+
+    $("taskForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const editingId = $("editingId").value;
+      const existing = tasks.find(t => t.id === editingId);
+      const status = $("status").value;
+      const now = new Date().toISOString();
+      const subtasks = buildSubtasksFromText($("subtasksText").value, existing?.subtasks || []);
+      const autoProgress = subtaskProgress(subtasks);
+      const progress = status === "done" ? 100 : autoProgress ?? Number($("progress").value);
+
+      const data = {
+        title: $("title").value.trim(),
+        category: $("category").value,
+        priority: $("priority").value,
+        dueDate: $("dueDate").value,
+        dueTime: $("dueTime").value || "23:59",
+        remindBefore: Number($("remindBefore").value),
+        status,
+        progress,
+        subtasks,
+        memo: $("memo").value.trim(),
+      };
+
+      if (!data.title) return;
+
+      if (editingId) {
+        tasks = tasks.map(task => {
+          if (task.id !== editingId) return task;
+          const becameDone = task.status !== "done" && data.status === "done";
+          const becameUndone = task.status === "done" && data.status !== "done";
+          return {
+            ...task,
+            ...data,
+            updatedAt: now,
+            completedAt: becameDone ? now : becameUndone ? null : task.completedAt
+          };
+        });
+        showFeedback("更新しました。");
+      } else {
+        tasks.push({
+          id: uid(),
+          ...data,
+          createdAt: now,
+          updatedAt: now,
+          completedAt: data.status === "done" ? now : null
+        });
+        showFeedback("タスクを追加しました。");
+      }
+
+      saveTasks();
+      resetForm();
+    });
+
+    $("resetButton").addEventListener("click", resetForm);
+
+    $("quickAddButton").addEventListener("click", () => {
+      const title = $("quickTitle").value.trim();
+      if (!title) return;
+      const now = new Date().toISOString();
+      tasks.push({
+        id: uid(),
+        title,
+        category: "大学課題",
+        priority: "normal",
+        dueDate: $("quickDue").value,
+        dueTime: "23:59",
+        remindBefore: 1440,
+        status: "not_started",
+        progress: 0,
+        subtasks: [],
+        memo: "",
+        createdAt: now,
+        updatedAt: now,
+        completedAt: null
+      });
+      $("quickTitle").value = "";
+      saveTasks();
+      showFeedback("素早く追加しました。");
+    });
+
+    function editTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      $("editingId").value = task.id;
+      $("formTitle").textContent = "タスクを編集";
+      $("saveButton").textContent = "更新";
+      $("title").value = task.title;
+      $("category").value = task.category;
+      $("priority").value = task.priority;
+      $("dueDate").value = task.dueDate;
+      $("dueTime").value = task.dueTime || "23:59";
+      $("remindBefore").value = String(task.remindBefore ?? 1440);
+      $("status").value = task.status;
+      $("progress").value = task.progress;
+      $("progressText").textContent = `${task.progress}%`;
+      $("subtasksText").value = (task.subtasks || []).map(s => s.title).join("\n");
+      $("memo").value = task.memo || "";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function completeTask(id) {
+      const now = new Date().toISOString();
+      tasks = tasks.map(task => task.id === id ? {
+        ...task,
+        status: "done",
+        progress: 100,
+        subtasks: (task.subtasks || []).map(s => ({ ...s, done: true })),
+        updatedAt: now,
+        completedAt: now
+      } : task);
+      saveTasks();
+      showFeedback("完了。履歴に記録しました。");
+    }
+
+    function reopenTask(id) {
+      const now = new Date().toISOString();
+      tasks = tasks.map(task => task.id === id ? {
+        ...task,
+        status: "doing",
+        progress: task.progress === 100 ? 50 : task.progress,
+        updatedAt: now,
+        completedAt: null
+      } : task);
+      saveTasks();
+      showFeedback("未完了に戻しました。");
+    }
+
+    function deleteTask(id) {
+      if (!confirm("このタスクを削除しますか？")) return;
+      tasks = tasks.filter(task => task.id !== id);
+      saveTasks();
+      showFeedback("削除しました。");
+    }
+
+    function toggleSubtask(taskId, subtaskId) {
+      tasks = tasks.map(task => {
+        if (task.id !== taskId) return task;
+        const subtasks = (task.subtasks || []).map(s => s.id === subtaskId ? { ...s, done: !s.done } : s);
+        const progress = subtaskProgress(subtasks) ?? task.progress;
+        const status = progress === 100 ? "done" : progress > 0 ? "doing" : "not_started";
+        const now = new Date().toISOString();
+        return {
+          ...task,
+          subtasks,
+          progress,
+          status,
+          updatedAt: now,
+          completedAt: status === "done" ? now : null
+        };
+      });
+      saveTasks();
+    }
+
+    function dueBadge(task) {
+      if (task.status === "done") {
+        return `<span class="badge done">完了：${task.completedAt ? task.completedAt.slice(0, 10) : "記録済み"}</span>`;
+      }
+
+      const diff = daysUntil(task.dueDate);
+      if (diff < 0) return `<span class="badge overdue">期限切れ：${Math.abs(diff)}日前</span>`;
+      if (diff === 0) return `<span class="badge today">今日まで</span>`;
+      if (diff === 1) return `<span class="badge today">明日まで</span>`;
+      return `<span class="badge">あと${diff}日</span>`;
+    }
+
+    function reminderBadge(task) {
+      if (!task.remindBefore) return "";
+      const label = {
+        60: "1時間前通知",
+        180: "3時間前通知",
+        1440: "1日前通知",
+        4320: "3日前通知",
+        10080: "1週間前通知"
+      }[task.remindBefore] || "通知あり";
+      return `<span class="badge remind">${label}</span>`;
+    }
+
+    function getFilteredTasks() {
+      const q = $("search").value.trim().toLowerCase();
+      const filter = $("filter").value;
+      const sort = $("sort").value;
+
+      let list = [...tasks];
+
+      if (currentTab === "today") {
+        list = list.filter(t => t.status !== "done" && daysUntil(t.dueDate) <= 0);
+      } else if (currentTab === "active") {
+        list = list.filter(t => t.status !== "done");
+      } else if (currentTab === "history") {
+        list = list.filter(t => t.status === "done");
+      }
+
+      if (q) {
+        list = list.filter(t => {
+          const sub = (t.subtasks || []).map(s => s.title).join(" ");
+          const target = `${t.title} ${t.memo || ""} ${t.category} ${sub}`.toLowerCase();
+          return target.includes(q);
+        });
+      }
+
+      if (filter !== "all") {
+        list = list.filter(t => {
+          const diff = daysUntil(t.dueDate);
+          if (filter === "overdue") return t.status !== "done" && diff < 0;
+          if (filter === "today") return diff <= 0;
+          if (filter === "week") return diff >= 0 && diff <= 7;
+          if (filter === "month") return diff >= 0 && diff <= 30;
+          return true;
+        });
+      }
+
+      list.sort((a, b) => {
+        if (sort === "dueAsc") return dueDateTime(a) - dueDateTime(b);
+        if (sort === "priority") return priorityRank(a.priority) - priorityRank(b.priority) || dueDateTime(a) - dueDateTime(b);
+        if (sort === "createdDesc") return new Date(b.createdAt) - new Date(a.createdAt);
+        if (sort === "progressAsc") return a.progress - b.progress;
+        return 0;
+      });
+
+      return list;
+    }
+
+    function renderStats() {
+      const total = tasks.length;
+      const done = tasks.filter(t => t.status === "done").length;
+      const active = total - done;
+      const todayCount = tasks.filter(t => t.status !== "done" && daysUntil(t.dueDate) <= 0).length;
+      const avg = total ? Math.round(tasks.reduce((sum, t) => sum + Number(t.progress || 0), 0) / total) : 0;
+
+      $("statTotal").textContent = total;
+      $("statActive").textContent = active;
+      $("statToday").textContent = todayCount;
+      $("statDone").textContent = done;
+      $("statRate").textContent = `${avg}%`;
+    }
+
+    function renderTasks() {
+      const list = getFilteredTasks();
+      const container = $("taskList");
+
+      if (!list.length) {
+        container.innerHTML = `<div class="empty">表示するタスクはありません。</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(task => {
+        const priorityClass = task.priority === "high" ? " high" : "";
+        const memo = task.memo ? `<p class="task-memo">${escapeHtml(task.memo)}</p>` : "";
+        const doneButton = task.status === "done"
+          ? `<button class="ghost" onclick="reopenTask('${task.id}')">未完了に戻す</button>`
+          : `<button class="ok" onclick="completeTask('${task.id}')">完了</button>`;
+        const urgentClass = task.status !== "done" && daysUntil(task.dueDate) <= 0 ? " urgent" : "";
+
+        const subtasksHtml = (task.subtasks && task.subtasks.length) ? `
+          <div class="subtasks">
+            ${(task.subtasks || []).map(s => `
+              <label class="subtask ${s.done ? "done" : ""}">
+                <input type="checkbox" ${s.done ? "checked" : ""} onchange="toggleSubtask('${task.id}', '${s.id}')" />
+                <span>${escapeHtml(s.title)}</span>
+              </label>
+            `).join("")}
+          </div>
+        ` : "";
+
+        return `
+          <article class="task${urgentClass}">
+            <div class="task-title">${escapeHtml(task.title)}</div>
+            <div class="badges">
+              <span class="badge">${escapeHtml(task.category)}</span>
+              <span class="badge${priorityClass}">${priorityLabel(task.priority)}</span>
+              <span class="badge">${statusLabel(task.status)}</span>
+              <span class="badge">期限：${escapeHtml(task.dueDate)} ${escapeHtml(task.dueTime || "23:59")}</span>
+              ${dueBadge(task)}
+              ${reminderBadge(task)}
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress-top">
+                <span>進捗</span>
+                <span>${Number(task.progress || 0)}%</span>
+              </div>
+              <div class="bar"><span style="width:${Number(task.progress || 0)}%"></span></div>
+            </div>
+
+            ${subtasksHtml}
+            ${memo}
+
+            <div class="task-actions">
+              ${doneButton}
+              <button class="secondary" onclick="editTask('${task.id}')">編集</button>
+              <button class="danger" onclick="deleteTask('${task.id}')">削除</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function render() {
+      renderStats();
+      renderTasks();
+    }
+
+    document.querySelectorAll("[data-tab]").forEach(button => {
+      button.addEventListener("click", () => {
+        currentTab = button.dataset.tab;
+        document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
+        button.classList.add("active");
+        render();
+      });
+    });
+
+    ["search", "filter", "sort"].forEach(id => {
+      $(id).addEventListener("input", render);
+      $(id).addEventListener("change", render);
+    });
+
+    $("notifyButton").addEventListener("click", async () => {
+      if (!("Notification" in window)) {
+        alert("このブラウザは通知に対応していません。");
+        return;
+      }
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        new Notification("Private ToDo Board", { body: "通知が有効になりました。" });
+      } else {
+        alert("通知が許可されませんでした。ブラウザ設定を確認してください。");
+      }
+    });
+
+    function checkReminders() {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const now = new Date();
+
+      tasks.forEach(task => {
+        if (task.status === "done" || !task.remindBefore) return;
+
+        const remindAt = new Date(dueDateTime(task).getTime() - Number(task.remindBefore) * 60 * 1000);
+        const due = dueDateTime(task);
+        const key = `${task.id}-${task.remindBefore}-${task.dueDate}-${task.dueTime}`;
+
+        if (now >= remindAt && now <= due && !notifiedKeys.has(key)) {
+          notifiedKeys.add(key);
+          new Notification("ToDoリマインド", {
+            body: `${task.title}\n期限：${task.dueDate} ${task.dueTime || "23:59"}`
+          });
+          showFeedback(`リマインド：${task.title}`);
+        }
+      });
+    }
+
+    setInterval(checkReminders, 60 * 1000);
+
+    $("exportButton").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const date = formatDate(new Date());
+      a.href = url;
+      a.download = `todo-backup-${date}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    $("importButton").addEventListener("click", () => $("importFile").click());
+
+    $("importFile").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          if (!Array.isArray(imported)) throw new Error("Invalid format");
+          tasks = imported;
+          saveTasks();
+          showFeedback("読み込みました。");
+        } catch {
+          alert("読み込みに失敗しました。JSON形式を確認してください。");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    });
+
+    window.editTask = editTask;
+    window.completeTask = completeTask;
+    window.reopenTask = reopenTask;
+    window.deleteTask = deleteTask;
+    window.toggleSubtask = toggleSubtask;
+
+    loadTasks();
+    render();
+    checkReminders();
+  </script>
+</body>
+</html>
