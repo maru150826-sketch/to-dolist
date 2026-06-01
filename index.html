@@ -14,8 +14,8 @@
       --accent: #2f6fed;
       --accent-weak: #e7efff;
       --danger: #c92a2a;
-      --warning: #f08c00;
       --ok: #2b8a3e;
+      --gold: #fff4d6;
       --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
       --radius: 18px;
     }
@@ -35,7 +35,7 @@
       color: white;
     }
 
-    .header-inner {
+    .header-inner, main {
       max-width: 1180px;
       margin: 0 auto;
     }
@@ -54,14 +54,12 @@
     }
 
     main {
-      max-width: 1180px;
-      margin: 0 auto;
       padding: 22px 18px 48px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 370px 1fr;
+      grid-template-columns: 380px 1fr;
       gap: 18px;
       align-items: start;
     }
@@ -114,19 +112,6 @@
       box-shadow: 0 0 0 3px rgba(47,111,237,0.12);
     }
 
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
     button {
       border: 0;
       border-radius: 999px;
@@ -144,27 +129,46 @@
     button.ghost { background: #eef1f6; color: var(--text); }
     button.danger { background: #ffe3e3; color: var(--danger); }
     button.ok { background: #e6f4ea; color: var(--ok); }
-    button.gold { background: #fff4d6; color: #8a5a00; }
+    button.gold { background: var(--gold); color: #8a5a00; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions, .template-buttons, .mini-actions, .tab-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions { margin-top: 14px; }
+    .template-buttons { margin-top: 12px; }
+    .template-buttons button, .mini-actions button, .task-actions button {
+      padding: 8px 11px;
+      font-size: 12px;
+    }
 
     .quick-add {
       display: grid;
       grid-template-columns: 1fr 125px 96px;
       gap: 8px;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
     }
 
     @media (max-width: 760px) {
-      .quick-add { grid-template-columns: 1fr; }
+      .quick-add, .toolbar, .row { grid-template-columns: 1fr; }
     }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 18px;
+      margin: 18px 0;
     }
 
-    @media (max-width: 820px) {
+    @media (max-width: 900px) {
       .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
@@ -196,11 +200,39 @@
       margin-bottom: 12px;
     }
 
-    @media (max-width: 760px) {
-      .toolbar { grid-template-columns: 1fr; }
+    .tab-buttons {
+      margin-bottom: 12px;
     }
 
-    .task-list { display: grid; gap: 10px; }
+    .tab-buttons button {
+      background: #eef1f6;
+      color: var(--text);
+    }
+
+    .tab-buttons button.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .focus-card {
+      border: 1px solid #ffd6e7;
+      background: #fff8fb;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .focus-card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
 
     .task {
       border: 1px solid var(--line);
@@ -239,11 +271,12 @@
     }
 
     .badge.overdue { background: #ffe3e3; color: var(--danger); }
-    .badge.today { background: #fff4d6; color: #8a5a00; }
+    .badge.today { background: var(--gold); color: #8a5a00; }
     .badge.done { background: #e6f4ea; color: var(--ok); }
     .badge.high { background: #ffe8cc; color: #d9480f; }
     .badge.remind { background: #e7efff; color: var(--accent); }
     .badge.repeat { background: #edf7ed; color: #2b8a3e; }
+    .badge.focus { background: #ffe8f0; color: #c2255c; }
 
     .progress-wrap { margin: 12px 0 10px; }
 
@@ -271,14 +304,6 @@
       border-radius: 999px;
     }
 
-    .task-memo {
-      color: var(--muted);
-      line-height: 1.65;
-      white-space: pre-wrap;
-      font-size: 13px;
-      margin: 8px 0 0;
-    }
-
     .subtasks {
       margin: 10px 0 0;
       padding: 10px;
@@ -293,7 +318,6 @@
       gap: 8px;
       padding: 5px 0;
       font-size: 13px;
-      color: var(--text);
     }
 
     .subtask input { width: auto; }
@@ -302,16 +326,19 @@
       text-decoration: line-through;
     }
 
+    .task-memo {
+      color: var(--muted);
+      line-height: 1.65;
+      white-space: pre-wrap;
+      font-size: 13px;
+      margin: 8px 0 0;
+    }
+
     .task-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       margin-top: 12px;
-    }
-
-    .task-actions button {
-      padding: 8px 11px;
-      font-size: 12px;
     }
 
     .empty {
@@ -323,22 +350,14 @@
       background: #fafbfe;
     }
 
-    .small-note {
+    .small-note, .footer-note {
       color: var(--muted);
       font-size: 12px;
-      line-height: 1.7;
-      margin-top: 12px;
+      line-height: 1.8;
     }
 
-    .tab-buttons {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .tab-buttons button { background: #eef1f6; color: var(--text); }
-    .tab-buttons button.active { background: var(--accent); color: white; }
+    .small-note { margin-top: 12px; }
+    .footer-note { margin-top: 18px; }
 
     .danger-zone {
       border-top: 1px solid var(--line);
@@ -347,13 +366,6 @@
     }
 
     .file-input { display: none; }
-
-    .footer-note {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.8;
-    }
 
     .feedback {
       position: fixed;
@@ -368,7 +380,7 @@
       opacity: 0;
       transition: 0.25s ease;
       z-index: 20;
-      max-width: 320px;
+      max-width: 340px;
       line-height: 1.6;
       font-weight: 700;
     }
@@ -379,31 +391,38 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="header-inner">
       <h1>Private ToDo Board</h1>
-      <p class="subtitle">
-        課題、PC作業、TOEIC、ITパスポートなどを管理。毎日・毎週の習慣タスクにも対応。
-      </p>
+      <p class="subtitle">課題、PC作業、TOEIC、ITパスポート、習慣タスクを一括管理。最重要・繰り返し・通知・履歴・バックアップ対応。</p>
     </div>
   </header>
 
   <main>
-    <section class="panel" style="margin-bottom:18px;">
+    <section class="panel">
       <h2>素早い入力</h2>
       <div class="quick-add">
         <input id="quickTitle" placeholder="例：TOEIC単語100語 / ITパスポート30問" />
         <input id="quickDue" type="date" />
         <button id="quickAddButton" type="button">追加</button>
       </div>
-      <p class="small-note">細かい設定はあとから編集できます。毎日やるものは下の「繰り返し」で設定してください。</p>
+      <div class="template-buttons">
+        <button type="button" class="secondary" onclick="addTemplate('TOEIC単語100語', 'TOEIC', 'daily')">TOEIC単語</button>
+        <button type="button" class="secondary" onclick="addTemplate('TOEICリスニング30分', 'TOEIC', 'daily')">TOEICリスニング</button>
+        <button type="button" class="secondary" onclick="addTemplate('TOEIC精読1題', 'TOEIC', 'daily')">TOEIC精読</button>
+        <button type="button" class="secondary" onclick="addTemplate('ITパスポート過去問30問', 'ITパスポート', 'daily')">ITパスポート</button>
+        <button type="button" class="secondary" onclick="addTemplate('大学課題の提出準備', '大学課題', 'none')">大学課題</button>
+      </div>
+      <p class="small-note">忘れる前に入れる欄です。毎日やるものはテンプレートか下の繰り返し設定を使ってください。</p>
     </section>
 
-    <section class="stats" aria-label="達成状況">
+    <section class="stats">
       <div class="stat"><div class="num" id="statTotal">0</div><div class="label">全タスク</div></div>
       <div class="stat"><div class="num" id="statActive">0</div><div class="label">未完了</div></div>
       <div class="stat"><div class="num" id="statToday">0</div><div class="label">今日まで</div></div>
+      <div class="stat"><div class="num" id="statFocus">0</div><div class="label">最重要</div></div>
       <div class="stat"><div class="num" id="statDone">0</div><div class="label">完了済み</div></div>
       <div class="stat"><div class="num" id="statRate">0%</div><div class="label">全体達成率</div></div>
     </section>
@@ -499,7 +518,7 @@
           <textarea id="subtasksText" placeholder="1行に1つずつ入力&#10;例：単語100語&#10;例：Part 5を20問&#10;例：間違えた問題を復習"></textarea>
 
           <label for="memo">メモ</label>
-          <textarea id="memo" placeholder="例：教材名、ページ数、URL、提出先、細かい手順など"></textarea>
+          <textarea id="memo" placeholder="教材名、ページ数、URL、提出先、細かい手順など"></textarea>
 
           <div class="actions">
             <button type="submit" id="saveButton">保存</button>
@@ -507,27 +526,25 @@
             <button type="button" class="gold" id="notifyButton">通知を許可</button>
           </div>
 
-          <p class="small-note">
-            繰り返しタスクは、完了すると次回分が自動作成されます。終了日は最大1年先までです。
-          </p>
+          <p class="small-note">繰り返しタスクは、完了すると次回分が自動作成されます。通知はページを開いている時に動きます。</p>
         </form>
 
         <div class="danger-zone">
           <h2>データ管理</h2>
           <div class="actions">
             <button type="button" class="secondary" id="exportButton">JSON保存</button>
+            <button type="button" class="secondary" id="csvButton">CSV保存</button>
             <button type="button" class="ghost" id="importButton">JSON読込</button>
             <input type="file" id="importFile" class="file-input" accept="application/json" />
           </div>
-          <p class="small-note">
-            PCを変える、ブラウザのデータを消す、スマホでも使いたい場合は、定期的にJSON保存してください。
-          </p>
+          <p class="small-note">JSONは復元用、CSVはExcelやスプレッドシート確認用です。</p>
         </div>
       </aside>
 
       <section class="panel">
         <div class="tab-buttons">
           <button type="button" class="active" data-tab="today">今日やる</button>
+          <button type="button" data-tab="focus">最重要</button>
           <button type="button" data-tab="active">未完了</button>
           <button type="button" data-tab="routine">習慣</button>
           <button type="button" data-tab="history">完了履歴</button>
@@ -551,11 +568,15 @@
           </select>
         </div>
 
+        <div class="mini-actions">
+          <button type="button" class="ghost" id="moveOverdueButton">期限切れを今日へ移動</button>
+          <button type="button" class="ghost" id="clearFocusButton">最重要を全解除</button>
+        </div>
+
+        <div id="focusCard"></div>
         <div id="taskList" class="task-list"></div>
 
-        <p class="footer-note">
-          通知はページを開いている時に動きます。ページを完全に閉じた状態での常時通知は、HTML単体のGitHub Pagesでは制限があります。
-        </p>
+        <p class="footer-note">GitHub Pages上のページ自体はURLを知っている人が開けます。ただしタスクデータは、このブラウザのlocalStorageに保存されます。</p>
       </section>
     </section>
   </main>
@@ -563,8 +584,8 @@
   <div id="feedback" class="feedback"></div>
 
   <script>
-    const STORAGE_KEY = "privateTodoBoard.tasks.v3";
-    const OLD_KEYS = ["privateTodoBoard.tasks.v2", "privateTodoBoard.tasks.v1"];
+    const STORAGE_KEY = "privateTodoBoard.tasks.v4";
+    const OLD_KEYS = ["privateTodoBoard.tasks.v3", "privateTodoBoard.tasks.v2", "privateTodoBoard.tasks.v1"];
     let tasks = [];
     let currentTab = "today";
     let notifiedKeys = new Set();
@@ -573,6 +594,7 @@
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
     const maxDate = new Date(today);
     maxDate.setFullYear(maxDate.getFullYear() + 1);
 
@@ -580,6 +602,7 @@
       $(id).min = formatDate(today);
       $(id).max = formatDate(maxDate);
     });
+
     $("dueDate").value = formatDate(today);
     $("quickDue").value = formatDate(today);
     $("repeatEnd").value = formatDate(maxDate);
@@ -592,14 +615,10 @@
     }
 
     function parseDate(value) {
-      const [y, m, d] = value.split("-").map(Number);
+      const [y, m, d] = String(value).split("-").map(Number);
       const date = new Date(y, m - 1, d);
       date.setHours(0, 0, 0, 0);
       return date;
-    }
-
-    function dueDateTime(task) {
-      return new Date(`${task.dueDate}T${task.dueTime || "23:59"}`);
     }
 
     function addDays(date, days) {
@@ -616,23 +635,39 @@
       return next;
     }
 
+    function dueDateTime(task) {
+      return new Date(`${task.dueDate}T${task.dueTime || "23:59"}`);
+    }
+
     function uid() {
       return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+    }
+
+    function normalizeTask(task) {
+      return {
+        repeatType: "none",
+        repeatEnd: formatDate(maxDate),
+        sourceRoutineId: null,
+        isFocus: false,
+        dueTime: "23:59",
+        remindBefore: 1440,
+        subtasks: [],
+        ...task,
+      };
     }
 
     function loadTasks() {
       try {
         const current = localStorage.getItem(STORAGE_KEY);
         if (current) {
-          tasks = JSON.parse(current) || [];
+          tasks = JSON.parse(current).map(normalizeTask);
           return;
         }
 
         for (const key of OLD_KEYS) {
           const old = localStorage.getItem(key);
           if (old) {
-            tasks = JSON.parse(old) || [];
-            tasks = tasks.map(normalizeTask);
+            tasks = JSON.parse(old).map(normalizeTask);
             saveTasks();
             return;
           }
@@ -642,18 +677,6 @@
       } catch {
         tasks = [];
       }
-    }
-
-    function normalizeTask(task) {
-      return {
-        repeatType: "none",
-        repeatEnd: formatDate(maxDate),
-        sourceRoutineId: null,
-        ...task,
-        dueTime: task.dueTime || "23:59",
-        remindBefore: Number(task.remindBefore ?? 1440),
-        subtasks: task.subtasks || [],
-      };
     }
 
     function saveTasks() {
@@ -675,18 +698,11 @@
     }
 
     function repeatLabel(type) {
-      return {
-        none: "",
-        daily: "毎日",
-        weekdays: "平日のみ",
-        weekly: "毎週",
-        monthly: "毎月"
-      }[type] || "";
+      return { none: "", daily: "毎日", weekdays: "平日のみ", weekly: "毎週", monthly: "毎月" }[type] || "";
     }
 
     function daysUntil(dueDate) {
-      const due = parseDate(dueDate);
-      return Math.round((due - today) / (1000 * 60 * 60 * 24));
+      return Math.round((parseDate(dueDate) - today) / (1000 * 60 * 60 * 24));
     }
 
     function escapeHtml(str) {
@@ -728,24 +744,18 @@
       const current = parseDate(task.dueDate);
       let next = null;
 
-      if (task.repeatType === "daily") {
+      if (task.repeatType === "daily") next = addDays(current, 1);
+      if (task.repeatType === "weekdays") {
         next = addDays(current, 1);
-      } else if (task.repeatType === "weekdays") {
-        next = addDays(current, 1);
-        while (next.getDay() === 0 || next.getDay() === 6) {
-          next = addDays(next, 1);
-        }
-      } else if (task.repeatType === "weekly") {
-        next = addDays(current, 7);
-      } else if (task.repeatType === "monthly") {
-        next = addMonths(current, 1);
+        while (next.getDay() === 0 || next.getDay() === 6) next = addDays(next, 1);
       }
+      if (task.repeatType === "weekly") next = addDays(current, 7);
+      if (task.repeatType === "monthly") next = addMonths(current, 1);
 
       if (!next) return null;
 
       const end = parseDate(task.repeatEnd || formatDate(maxDate));
-      if (next > end) return null;
-      if (next > maxDate) return null;
+      if (next > end || next > maxDate) return null;
       return formatDate(next);
     }
 
@@ -764,23 +774,25 @@
         createdAt: now,
         updatedAt: now,
         completedAt: null,
-        sourceRoutineId: task.sourceRoutineId || task.id
+        sourceRoutineId: task.sourceRoutineId || task.id,
+        isFocus: false
       };
     }
 
     function maybeCreateNextOccurrence(task) {
       if (!task.repeatType || task.repeatType === "none") return;
+
       const nextDate = getNextDate(task);
       if (!nextDate) return;
 
       const routineId = task.sourceRoutineId || task.id;
-      const alreadyExists = tasks.some(t =>
+      const exists = tasks.some(t =>
         t.status !== "done" &&
         (t.sourceRoutineId === routineId || t.id === routineId) &&
         t.dueDate === nextDate
       );
 
-      if (!alreadyExists) {
+      if (!exists) {
         const nextTask = createNextOccurrence(task);
         if (nextTask) tasks.push(nextTask);
       }
@@ -805,34 +817,29 @@
       $("memo").value = "";
     }
 
-    function syncProgressAndStatus() {
-      const status = $("status").value;
-      if (status === "done") {
-        $("progress").value = 100;
-      } else if (status === "not_started" && Number($("progress").value) === 100) {
-        $("progress").value = 0;
-      }
-      $("progressText").textContent = `${$("progress").value}%`;
-    }
-
     $("progress").addEventListener("input", () => {
-      $("progressText").textContent = `${$("progress").value}%`;
-      if (Number($("progress").value) === 100) $("status").value = "done";
-      else if (Number($("progress").value) > 0) $("status").value = "doing";
+      const value = Number($("progress").value);
+      $("progressText").textContent = `${value}%`;
+      if (value === 100) $("status").value = "done";
+      else if (value > 0) $("status").value = "doing";
       else $("status").value = "not_started";
     });
 
-    $("status").addEventListener("change", syncProgressAndStatus);
+    $("status").addEventListener("change", () => {
+      if ($("status").value === "done") $("progress").value = 100;
+      $("progressText").textContent = `${$("progress").value}%`;
+    });
 
     $("taskForm").addEventListener("submit", (event) => {
       event.preventDefault();
 
       const editingId = $("editingId").value;
       const existing = tasks.find(t => t.id === editingId);
-      const status = $("status").value;
       const now = new Date().toISOString();
+
       const subtasks = buildSubtasksFromText($("subtasksText").value, existing?.subtasks || []);
       const autoProgress = subtaskProgress(subtasks);
+      const status = $("status").value;
       const progress = status === "done" ? 100 : autoProgress ?? Number($("progress").value);
 
       const data = {
@@ -847,7 +854,7 @@
         status,
         progress,
         subtasks,
-        memo: $("memo").value.trim(),
+        memo: $("memo").value.trim()
       };
 
       if (!data.title) return;
@@ -875,8 +882,10 @@
           createdAt: now,
           updatedAt: now,
           completedAt: data.status === "done" ? now : null,
-          sourceRoutineId: null
+          sourceRoutineId: null,
+          isFocus: false
         };
+
         tasks.push(task);
         if (task.status === "done") maybeCreateNextOccurrence(task);
         showFeedback(data.repeatType === "none" ? "タスクを追加しました。" : "繰り返しタスクを追加しました。");
@@ -891,6 +900,7 @@
     $("quickAddButton").addEventListener("click", () => {
       const title = $("quickTitle").value.trim();
       if (!title) return;
+
       const now = new Date().toISOString();
       tasks.push({
         id: uid(),
@@ -909,12 +919,56 @@
         createdAt: now,
         updatedAt: now,
         completedAt: null,
-        sourceRoutineId: null
+        sourceRoutineId: null,
+        isFocus: false
       });
+
       $("quickTitle").value = "";
       saveTasks();
       showFeedback("素早く追加しました。");
     });
+
+    function addTemplate(title, category, repeatType) {
+      const now = new Date().toISOString();
+      const subtasks = category === "TOEIC"
+        ? [
+            { id: uid(), title: "実施する", done: false },
+            { id: uid(), title: "間違いを復習する", done: false }
+          ]
+        : category === "ITパスポート"
+          ? [
+              { id: uid(), title: "過去問を解く", done: false },
+              { id: uid(), title: "間違えた用語をメモする", done: false }
+            ]
+          : [
+              { id: uid(), title: "内容を確認する", done: false },
+              { id: uid(), title: "提出・完了する", done: false }
+            ];
+
+      tasks.push({
+        id: uid(),
+        title,
+        category,
+        priority: repeatType === "none" ? "normal" : "high",
+        dueDate: formatDate(today),
+        dueTime: "23:59",
+        repeatType,
+        repeatEnd: formatDate(maxDate),
+        remindBefore: repeatType === "none" ? 1440 : 60,
+        status: "not_started",
+        progress: 0,
+        subtasks,
+        memo: repeatType === "none" ? "" : "テンプレートから追加",
+        createdAt: now,
+        updatedAt: now,
+        completedAt: null,
+        sourceRoutineId: null,
+        isFocus: false
+      });
+
+      saveTasks();
+      showFeedback(`${title}を追加しました。`);
+    }
 
     function editTask(id) {
       const task = tasks.find(t => t.id === id);
@@ -951,7 +1005,8 @@
           progress: 100,
           subtasks: (task.subtasks || []).map(s => ({ ...s, done: true })),
           updatedAt: now,
-          completedAt: now
+          completedAt: now,
+          isFocus: false
         };
         return completedTask;
       });
@@ -969,6 +1024,7 @@
     function skipToNext(id) {
       const task = tasks.find(t => t.id === id);
       if (!task || !task.repeatType || task.repeatType === "none") return;
+
       maybeCreateNextOccurrence(task);
       tasks = tasks.filter(t => t.id !== id);
       saveTasks();
@@ -998,32 +1054,76 @@
     function deleteRoutineGroup(id) {
       const task = tasks.find(t => t.id === id);
       if (!task) return;
+
       const routineId = task.sourceRoutineId || task.id;
       if (!confirm("この繰り返しタスクの未完了分をまとめて削除しますか？")) return;
+
       tasks = tasks.filter(t => {
-        const tRoutine = t.sourceRoutineId || t.id;
-        return !(t.status !== "done" && tRoutine === routineId);
+        const targetRoutine = t.sourceRoutineId || t.id;
+        return !(t.status !== "done" && targetRoutine === routineId);
       });
+
       saveTasks();
-      showFeedback("繰り返しタスクの未完了分を削除しました。");
+      showFeedback("繰り返しタスクを停止しました。");
+    }
+
+    function toggleFocus(id) {
+      tasks = tasks.map(task => task.id === id ? {
+        ...task,
+        isFocus: !task.isFocus,
+        updatedAt: new Date().toISOString()
+      } : task);
+
+      const task = tasks.find(t => t.id === id);
+      saveTasks();
+      showFeedback(task?.isFocus ? "最重要に設定しました。" : "最重要を解除しました。");
+    }
+
+    function clearFocus() {
+      tasks = tasks.map(task => ({ ...task, isFocus: false }));
+      saveTasks();
+      showFeedback("最重要をすべて解除しました。");
+    }
+
+    function moveOverdueToToday() {
+      const todayStr = formatDate(today);
+      let count = 0;
+
+      tasks = tasks.map(task => {
+        if (task.status !== "done" && daysUntil(task.dueDate) < 0) {
+          count++;
+          return { ...task, dueDate: todayStr, updatedAt: new Date().toISOString() };
+        }
+        return task;
+      });
+
+      saveTasks();
+      showFeedback(count ? `${count}件を今日へ移動しました。` : "期限切れタスクはありません。");
     }
 
     function toggleSubtask(taskId, subtaskId) {
       let updatedTask = null;
+
       tasks = tasks.map(task => {
         if (task.id !== taskId) return task;
-        const subtasks = (task.subtasks || []).map(s => s.id === subtaskId ? { ...s, done: !s.done } : s);
+
+        const subtasks = (task.subtasks || []).map(s =>
+          s.id === subtaskId ? { ...s, done: !s.done } : s
+        );
+
         const progress = subtaskProgress(subtasks) ?? task.progress;
         const status = progress === 100 ? "done" : progress > 0 ? "doing" : "not_started";
-        const now = new Date().toISOString();
+
         updatedTask = {
           ...task,
           subtasks,
           progress,
           status,
-          updatedAt: now,
-          completedAt: status === "done" ? now : null
+          updatedAt: new Date().toISOString(),
+          completedAt: status === "done" ? new Date().toISOString() : null,
+          isFocus: status === "done" ? false : task.isFocus
         };
+
         return updatedTask;
       });
 
@@ -1065,6 +1165,10 @@
       return `<span class="badge repeat">繰り返し：${repeatLabel(task.repeatType)}</span>`;
     }
 
+    function focusBadge(task) {
+      return task.isFocus && task.status !== "done" ? `<span class="badge focus">今日の最重要</span>` : "";
+    }
+
     function getFilteredTasks() {
       const q = $("search").value.trim().toLowerCase();
       const filter = $("filter").value;
@@ -1074,6 +1178,8 @@
 
       if (currentTab === "today") {
         list = list.filter(t => t.status !== "done" && daysUntil(t.dueDate) <= 0);
+      } else if (currentTab === "focus") {
+        list = list.filter(t => t.status !== "done" && t.isFocus);
       } else if (currentTab === "active") {
         list = list.filter(t => t.status !== "done");
       } else if (currentTab === "routine") {
@@ -1117,13 +1223,35 @@
       const done = tasks.filter(t => t.status === "done").length;
       const active = total - done;
       const todayCount = tasks.filter(t => t.status !== "done" && daysUntil(t.dueDate) <= 0).length;
+      const focusCount = tasks.filter(t => t.status !== "done" && t.isFocus).length;
       const avg = total ? Math.round(tasks.reduce((sum, t) => sum + Number(t.progress || 0), 0) / total) : 0;
 
       $("statTotal").textContent = total;
       $("statActive").textContent = active;
       $("statToday").textContent = todayCount;
+      $("statFocus").textContent = focusCount;
       $("statDone").textContent = done;
       $("statRate").textContent = `${avg}%`;
+    }
+
+    function renderFocusCard() {
+      const focusTasks = tasks
+        .filter(t => t.status !== "done" && t.isFocus)
+        .sort((a, b) => dueDateTime(a) - dueDateTime(b));
+
+      if (!focusTasks.length) {
+        $("focusCard").innerHTML = "";
+        return;
+      }
+
+      const first = focusTasks[0];
+      $("focusCard").innerHTML = `
+        <div class="focus-card">
+          <strong>今いちばん先に潰すタスク</strong>
+          ${escapeHtml(first.title)}<br>
+          期限：${escapeHtml(first.dueDate)} ${escapeHtml(first.dueTime || "23:59")} / 進捗：${Number(first.progress || 0)}%
+        </div>
+      `;
     }
 
     function renderTasks() {
@@ -1137,17 +1265,8 @@
 
       container.innerHTML = list.map(task => {
         const priorityClass = task.priority === "high" ? " high" : "";
-        const memo = task.memo ? `<p class="task-memo">${escapeHtml(task.memo)}</p>` : "";
-        const doneButton = task.status === "done"
-          ? `<button class="ghost" onclick="reopenTask('${task.id}')">未完了に戻す</button>`
-          : `<button class="ok" onclick="completeTask('${task.id}')">完了</button>`;
-        const skipButton = task.status !== "done" && task.repeatType && task.repeatType !== "none"
-          ? `<button class="ghost" onclick="skipToNext('${task.id}')">今回はスキップ</button>`
-          : "";
-        const deleteRoutineButton = task.status !== "done" && task.repeatType && task.repeatType !== "none"
-          ? `<button class="danger" onclick="deleteRoutineGroup('${task.id}')">習慣を停止</button>`
-          : "";
         const urgentClass = task.status !== "done" && daysUntil(task.dueDate) <= 0 ? " urgent" : "";
+        const memo = task.memo ? `<p class="task-memo">${escapeHtml(task.memo)}</p>` : "";
 
         const subtasksHtml = (task.subtasks && task.subtasks.length) ? `
           <div class="subtasks">
@@ -1160,6 +1279,18 @@
           </div>
         ` : "";
 
+        const doneButton = task.status === "done"
+          ? `<button class="ghost" onclick="reopenTask('${task.id}')">未完了に戻す</button>`
+          : `<button class="ok" onclick="completeTask('${task.id}')">完了</button>`;
+
+        const skipButton = task.status !== "done" && task.repeatType && task.repeatType !== "none"
+          ? `<button class="ghost" onclick="skipToNext('${task.id}')">今回はスキップ</button>`
+          : "";
+
+        const stopButton = task.status !== "done" && task.repeatType && task.repeatType !== "none"
+          ? `<button class="danger" onclick="deleteRoutineGroup('${task.id}')">習慣を停止</button>`
+          : "";
+
         return `
           <article class="task${urgentClass}">
             <div class="task-title">${escapeHtml(task.title)}</div>
@@ -1171,6 +1302,7 @@
               ${dueBadge(task)}
               ${reminderBadge(task)}
               ${repeatBadge(task)}
+              ${focusBadge(task)}
             </div>
 
             <div class="progress-wrap">
@@ -1187,9 +1319,10 @@
             <div class="task-actions">
               ${doneButton}
               ${skipButton}
+              <button class="gold" onclick="toggleFocus('${task.id}')">${task.isFocus ? "最重要解除" : "最重要"}</button>
               <button class="secondary" onclick="editTask('${task.id}')">編集</button>
               <button class="danger" onclick="deleteTask('${task.id}')">削除</button>
-              ${deleteRoutineButton}
+              ${stopButton}
             </div>
           </article>
         `;
@@ -1198,6 +1331,7 @@
 
     function render() {
       renderStats();
+      renderFocusCard();
       renderTasks();
     }
 
@@ -1215,11 +1349,15 @@
       $(id).addEventListener("change", render);
     });
 
+    $("moveOverdueButton").addEventListener("click", moveOverdueToToday);
+    $("clearFocusButton").addEventListener("click", clearFocus);
+
     $("notifyButton").addEventListener("click", async () => {
       if (!("Notification" in window)) {
         alert("このブラウザは通知に対応していません。");
         return;
       }
+
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         new Notification("Private ToDo Board", { body: "通知が有効になりました。" });
@@ -1230,6 +1368,7 @@
 
     function checkReminders() {
       if (!("Notification" in window) || Notification.permission !== "granted") return;
+
       const now = new Date();
 
       tasks.forEach(task => {
@@ -1255,9 +1394,25 @@
       const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      const date = formatDate(new Date());
       a.href = url;
-      a.download = `todo-backup-${date}.json`;
+      a.download = `todo-backup-${formatDate(new Date())}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    $("csvButton").addEventListener("click", () => {
+      const headers = ["title", "category", "priority", "status", "progress", "dueDate", "dueTime", "repeatType", "completedAt", "memo"];
+      const rows = tasks.map(task => headers.map(key => {
+        const value = String(task[key] ?? "").replaceAll('"', '""');
+        return `"${value}"`;
+      }).join(","));
+
+      const csv = "\ufeff" + headers.join(",") + "\n" + rows.join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `todo-export-${formatDate(new Date())}.csv`;
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -1280,17 +1435,20 @@
           alert("読み込みに失敗しました。JSON形式を確認してください。");
         }
       };
+
       reader.readAsText(file);
       event.target.value = "";
     });
 
+    window.addTemplate = addTemplate;
     window.editTask = editTask;
     window.completeTask = completeTask;
+    window.skipToNext = skipToNext;
     window.reopenTask = reopenTask;
     window.deleteTask = deleteTask;
     window.deleteRoutineGroup = deleteRoutineGroup;
+    window.toggleFocus = toggleFocus;
     window.toggleSubtask = toggleSubtask;
-    window.skipToNext = skipToNext;
 
     loadTasks();
     render();
