@@ -92,9 +92,7 @@
       margin: 12px 0 6px;
     }
 
-    input, select, textarea, button {
-      font: inherit;
-    }
+    input, select, textarea, button { font: inherit; }
 
     input, select, textarea {
       width: 100%;
@@ -202,10 +200,7 @@
       .toolbar { grid-template-columns: 1fr; }
     }
 
-    .task-list {
-      display: grid;
-      gap: 10px;
-    }
+    .task-list { display: grid; gap: 10px; }
 
     .task {
       border: 1px solid var(--line);
@@ -248,10 +243,9 @@
     .badge.done { background: #e6f4ea; color: var(--ok); }
     .badge.high { background: #ffe8cc; color: #d9480f; }
     .badge.remind { background: #e7efff; color: var(--accent); }
+    .badge.repeat { background: #edf7ed; color: #2b8a3e; }
 
-    .progress-wrap {
-      margin: 12px 0 10px;
-    }
+    .progress-wrap { margin: 12px 0 10px; }
 
     .progress-top {
       display: flex;
@@ -343,15 +337,8 @@
       flex-wrap: wrap;
     }
 
-    .tab-buttons button {
-      background: #eef1f6;
-      color: var(--text);
-    }
-
-    .tab-buttons button.active {
-      background: var(--accent);
-      color: white;
-    }
+    .tab-buttons button { background: #eef1f6; color: var(--text); }
+    .tab-buttons button.active { background: var(--accent); color: white; }
 
     .danger-zone {
       border-top: 1px solid var(--line);
@@ -397,7 +384,7 @@
     <div class="header-inner">
       <h1>Private ToDo Board</h1>
       <p class="subtitle">
-        素早い入力、タスク細分化、期限・リマインド、優先順位、完了フィードバックつきの個人用ToDo表。
+        課題、PC作業、TOEIC、ITパスポートなどを管理。毎日・毎週の習慣タスクにも対応。
       </p>
     </div>
   </header>
@@ -406,11 +393,11 @@
     <section class="panel" style="margin-bottom:18px;">
       <h2>素早い入力</h2>
       <div class="quick-add">
-        <input id="quickTitle" placeholder="例：レポートの構成を作る" />
+        <input id="quickTitle" placeholder="例：TOEIC単語100語 / ITパスポート30問" />
         <input id="quickDue" type="date" />
         <button id="quickAddButton" type="button">追加</button>
       </div>
-      <p class="small-note">細かい設定はあとから編集できます。まずは忘れないうちに入れるための欄です。</p>
+      <p class="small-note">細かい設定はあとから編集できます。毎日やるものは下の「繰り返し」で設定してください。</p>
     </section>
 
     <section class="stats" aria-label="達成状況">
@@ -428,7 +415,7 @@
           <input type="hidden" id="editingId" />
 
           <label for="title">やること</label>
-          <input id="title" required placeholder="例：情報学入門の課題を提出する" />
+          <input id="title" required placeholder="例：TOEICリスニング30分 / ITパスポート過去問50問" />
 
           <div class="row">
             <div>
@@ -437,6 +424,7 @@
                 <option>大学課題</option>
                 <option>PC作業</option>
                 <option>TOEIC</option>
+                <option>ITパスポート</option>
                 <option>就活</option>
                 <option>筋トレ</option>
                 <option>生活</option>
@@ -466,9 +454,27 @@
 
           <div class="row">
             <div>
+              <label for="repeatType">繰り返し</label>
+              <select id="repeatType">
+                <option value="none" selected>なし</option>
+                <option value="daily">毎日</option>
+                <option value="weekdays">平日のみ</option>
+                <option value="weekly">毎週</option>
+                <option value="monthly">毎月</option>
+              </select>
+            </div>
+            <div>
+              <label for="repeatEnd">繰り返し終了日</label>
+              <input id="repeatEnd" type="date" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
               <label for="remindBefore">リマインド</label>
               <select id="remindBefore">
                 <option value="0">なし</option>
+                <option value="30">30分前</option>
                 <option value="60">1時間前</option>
                 <option value="180">3時間前</option>
                 <option value="1440" selected>1日前</option>
@@ -490,10 +496,10 @@
           <input id="progress" type="range" min="0" max="100" step="5" value="0" />
 
           <label for="subtasksText">タスクの細分化</label>
-          <textarea id="subtasksText" placeholder="1行に1つずつ入力&#10;例：資料を読む&#10;例：構成を作る&#10;例：提出前に見直す"></textarea>
+          <textarea id="subtasksText" placeholder="1行に1つずつ入力&#10;例：単語100語&#10;例：Part 5を20問&#10;例：間違えた問題を復習"></textarea>
 
           <label for="memo">メモ</label>
-          <textarea id="memo" placeholder="例：提出先、必要な資料、細かい手順など"></textarea>
+          <textarea id="memo" placeholder="例：教材名、ページ数、URL、提出先、細かい手順など"></textarea>
 
           <div class="actions">
             <button type="submit" id="saveButton">保存</button>
@@ -502,7 +508,7 @@
           </div>
 
           <p class="small-note">
-            期限は今日から1年先まで入力できます。通知はページを開いている時に動きます。
+            繰り返しタスクは、完了すると次回分が自動作成されます。終了日は最大1年先までです。
           </p>
         </form>
 
@@ -523,6 +529,7 @@
         <div class="tab-buttons">
           <button type="button" class="active" data-tab="today">今日やる</button>
           <button type="button" data-tab="active">未完了</button>
+          <button type="button" data-tab="routine">習慣</button>
           <button type="button" data-tab="history">完了履歴</button>
           <button type="button" data-tab="all">全件</button>
         </div>
@@ -547,7 +554,7 @@
         <div id="taskList" class="task-list"></div>
 
         <p class="footer-note">
-          GitHub Pagesに置くと、URLを知っている人はページを開けます。ただし、この設計ではタスクデータは各ブラウザ内に保存され、GitHubに自動送信されません。
+          通知はページを開いている時に動きます。ページを完全に閉じた状態での常時通知は、HTML単体のGitHub Pagesでは制限があります。
         </p>
       </section>
     </section>
@@ -556,7 +563,8 @@
   <div id="feedback" class="feedback"></div>
 
   <script>
-    const STORAGE_KEY = "privateTodoBoard.tasks.v2";
+    const STORAGE_KEY = "privateTodoBoard.tasks.v3";
+    const OLD_KEYS = ["privateTodoBoard.tasks.v2", "privateTodoBoard.tasks.v1"];
     let tasks = [];
     let currentTab = "today";
     let notifiedKeys = new Set();
@@ -568,12 +576,13 @@
     const maxDate = new Date(today);
     maxDate.setFullYear(maxDate.getFullYear() + 1);
 
-    $("dueDate").min = formatDate(today);
-    $("dueDate").max = formatDate(maxDate);
+    ["dueDate", "quickDue", "repeatEnd"].forEach(id => {
+      $(id).min = formatDate(today);
+      $(id).max = formatDate(maxDate);
+    });
     $("dueDate").value = formatDate(today);
-    $("quickDue").min = formatDate(today);
-    $("quickDue").max = formatDate(maxDate);
     $("quickDue").value = formatDate(today);
+    $("repeatEnd").value = formatDate(maxDate);
 
     function formatDate(date) {
       const y = date.getFullYear();
@@ -593,19 +602,62 @@
       return new Date(`${task.dueDate}T${task.dueTime || "23:59"}`);
     }
 
+    function addDays(date, days) {
+      const next = new Date(date);
+      next.setDate(next.getDate() + days);
+      next.setHours(0, 0, 0, 0);
+      return next;
+    }
+
+    function addMonths(date, months) {
+      const next = new Date(date);
+      next.setMonth(next.getMonth() + months);
+      next.setHours(0, 0, 0, 0);
+      return next;
+    }
+
     function uid() {
       return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
     }
 
     function loadTasks() {
       try {
-        tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const current = localStorage.getItem(STORAGE_KEY);
+        if (current) {
+          tasks = JSON.parse(current) || [];
+          return;
+        }
+
+        for (const key of OLD_KEYS) {
+          const old = localStorage.getItem(key);
+          if (old) {
+            tasks = JSON.parse(old) || [];
+            tasks = tasks.map(normalizeTask);
+            saveTasks();
+            return;
+          }
+        }
+
+        tasks = [];
       } catch {
         tasks = [];
       }
     }
 
+    function normalizeTask(task) {
+      return {
+        repeatType: "none",
+        repeatEnd: formatDate(maxDate),
+        sourceRoutineId: null,
+        ...task,
+        dueTime: task.dueTime || "23:59",
+        remindBefore: Number(task.remindBefore ?? 1440),
+        subtasks: task.subtasks || [],
+      };
+    }
+
     function saveTasks() {
+      tasks = tasks.map(normalizeTask);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
       render();
     }
@@ -620,6 +672,16 @@
 
     function statusLabel(status) {
       return { not_started: "未着手", doing: "進行中", done: "完了" }[status] ?? "未着手";
+    }
+
+    function repeatLabel(type) {
+      return {
+        none: "",
+        daily: "毎日",
+        weekdays: "平日のみ",
+        weekly: "毎週",
+        monthly: "毎月"
+      }[type] || "";
     }
 
     function daysUntil(dueDate) {
@@ -652,10 +714,76 @@
         .map(title => ({ id: uid(), title, done: oldMap.get(title) || false }));
     }
 
+    function resetSubtasksForNext(subtasks) {
+      return (subtasks || []).map(s => ({ ...s, id: uid(), done: false }));
+    }
+
     function subtaskProgress(subtasks) {
       if (!subtasks || subtasks.length === 0) return null;
       const done = subtasks.filter(s => s.done).length;
       return Math.round((done / subtasks.length) * 100);
+    }
+
+    function getNextDate(task) {
+      const current = parseDate(task.dueDate);
+      let next = null;
+
+      if (task.repeatType === "daily") {
+        next = addDays(current, 1);
+      } else if (task.repeatType === "weekdays") {
+        next = addDays(current, 1);
+        while (next.getDay() === 0 || next.getDay() === 6) {
+          next = addDays(next, 1);
+        }
+      } else if (task.repeatType === "weekly") {
+        next = addDays(current, 7);
+      } else if (task.repeatType === "monthly") {
+        next = addMonths(current, 1);
+      }
+
+      if (!next) return null;
+
+      const end = parseDate(task.repeatEnd || formatDate(maxDate));
+      if (next > end) return null;
+      if (next > maxDate) return null;
+      return formatDate(next);
+    }
+
+    function createNextOccurrence(task) {
+      const nextDate = getNextDate(task);
+      if (!nextDate) return null;
+
+      const now = new Date().toISOString();
+      return {
+        ...task,
+        id: uid(),
+        dueDate: nextDate,
+        status: "not_started",
+        progress: 0,
+        subtasks: resetSubtasksForNext(task.subtasks),
+        createdAt: now,
+        updatedAt: now,
+        completedAt: null,
+        sourceRoutineId: task.sourceRoutineId || task.id
+      };
+    }
+
+    function maybeCreateNextOccurrence(task) {
+      if (!task.repeatType || task.repeatType === "none") return;
+      const nextDate = getNextDate(task);
+      if (!nextDate) return;
+
+      const routineId = task.sourceRoutineId || task.id;
+      const alreadyExists = tasks.some(t =>
+        t.status !== "done" &&
+        (t.sourceRoutineId === routineId || t.id === routineId) &&
+        t.dueDate === nextDate
+      );
+
+      if (!alreadyExists) {
+        const nextTask = createNextOccurrence(task);
+        if (nextTask) tasks.push(nextTask);
+      }
     }
 
     function resetForm() {
@@ -667,6 +795,8 @@
       $("priority").value = "normal";
       $("dueDate").value = formatDate(today);
       $("dueTime").value = "23:59";
+      $("repeatType").value = "none";
+      $("repeatEnd").value = formatDate(maxDate);
       $("remindBefore").value = "1440";
       $("status").value = "not_started";
       $("progress").value = 0;
@@ -711,6 +841,8 @@
         priority: $("priority").value,
         dueDate: $("dueDate").value,
         dueTime: $("dueTime").value || "23:59",
+        repeatType: $("repeatType").value,
+        repeatEnd: $("repeatEnd").value || formatDate(maxDate),
         remindBefore: Number($("remindBefore").value),
         status,
         progress,
@@ -732,16 +864,22 @@
             completedAt: becameDone ? now : becameUndone ? null : task.completedAt
           };
         });
+
+        const updated = tasks.find(t => t.id === editingId);
+        if (updated && updated.status === "done") maybeCreateNextOccurrence(updated);
         showFeedback("更新しました。");
       } else {
-        tasks.push({
+        const task = {
           id: uid(),
           ...data,
           createdAt: now,
           updatedAt: now,
-          completedAt: data.status === "done" ? now : null
-        });
-        showFeedback("タスクを追加しました。");
+          completedAt: data.status === "done" ? now : null,
+          sourceRoutineId: null
+        };
+        tasks.push(task);
+        if (task.status === "done") maybeCreateNextOccurrence(task);
+        showFeedback(data.repeatType === "none" ? "タスクを追加しました。" : "繰り返しタスクを追加しました。");
       }
 
       saveTasks();
@@ -761,6 +899,8 @@
         priority: "normal",
         dueDate: $("quickDue").value,
         dueTime: "23:59",
+        repeatType: "none",
+        repeatEnd: formatDate(maxDate),
         remindBefore: 1440,
         status: "not_started",
         progress: 0,
@@ -768,7 +908,8 @@
         memo: "",
         createdAt: now,
         updatedAt: now,
-        completedAt: null
+        completedAt: null,
+        sourceRoutineId: null
       });
       $("quickTitle").value = "";
       saveTasks();
@@ -787,6 +928,8 @@
       $("priority").value = task.priority;
       $("dueDate").value = task.dueDate;
       $("dueTime").value = task.dueTime || "23:59";
+      $("repeatType").value = task.repeatType || "none";
+      $("repeatEnd").value = task.repeatEnd || formatDate(maxDate);
       $("remindBefore").value = String(task.remindBefore ?? 1440);
       $("status").value = task.status;
       $("progress").value = task.progress;
@@ -798,16 +941,38 @@
 
     function completeTask(id) {
       const now = new Date().toISOString();
-      tasks = tasks.map(task => task.id === id ? {
-        ...task,
-        status: "done",
-        progress: 100,
-        subtasks: (task.subtasks || []).map(s => ({ ...s, done: true })),
-        updatedAt: now,
-        completedAt: now
-      } : task);
+      let completedTask = null;
+
+      tasks = tasks.map(task => {
+        if (task.id !== id) return task;
+        completedTask = {
+          ...task,
+          status: "done",
+          progress: 100,
+          subtasks: (task.subtasks || []).map(s => ({ ...s, done: true })),
+          updatedAt: now,
+          completedAt: now
+        };
+        return completedTask;
+      });
+
+      if (completedTask) maybeCreateNextOccurrence(completedTask);
       saveTasks();
-      showFeedback("完了。履歴に記録しました。");
+
+      if (completedTask?.repeatType && completedTask.repeatType !== "none" && getNextDate(completedTask)) {
+        showFeedback("完了。次回分も作成しました。");
+      } else {
+        showFeedback("完了。履歴に記録しました。");
+      }
+    }
+
+    function skipToNext(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task || !task.repeatType || task.repeatType === "none") return;
+      maybeCreateNextOccurrence(task);
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+      showFeedback("今回はスキップし、次回分を作成しました。");
     }
 
     function reopenTask(id) {
@@ -830,14 +995,28 @@
       showFeedback("削除しました。");
     }
 
+    function deleteRoutineGroup(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+      const routineId = task.sourceRoutineId || task.id;
+      if (!confirm("この繰り返しタスクの未完了分をまとめて削除しますか？")) return;
+      tasks = tasks.filter(t => {
+        const tRoutine = t.sourceRoutineId || t.id;
+        return !(t.status !== "done" && tRoutine === routineId);
+      });
+      saveTasks();
+      showFeedback("繰り返しタスクの未完了分を削除しました。");
+    }
+
     function toggleSubtask(taskId, subtaskId) {
+      let updatedTask = null;
       tasks = tasks.map(task => {
         if (task.id !== taskId) return task;
         const subtasks = (task.subtasks || []).map(s => s.id === subtaskId ? { ...s, done: !s.done } : s);
         const progress = subtaskProgress(subtasks) ?? task.progress;
         const status = progress === 100 ? "done" : progress > 0 ? "doing" : "not_started";
         const now = new Date().toISOString();
-        return {
+        updatedTask = {
           ...task,
           subtasks,
           progress,
@@ -845,7 +1024,14 @@
           updatedAt: now,
           completedAt: status === "done" ? now : null
         };
+        return updatedTask;
       });
+
+      if (updatedTask && updatedTask.status === "done") {
+        maybeCreateNextOccurrence(updatedTask);
+        showFeedback(updatedTask.repeatType !== "none" ? "完了。次回分も作成しました。" : "サブタスク完了。タスクも完了です。");
+      }
+
       saveTasks();
     }
 
@@ -864,6 +1050,7 @@
     function reminderBadge(task) {
       if (!task.remindBefore) return "";
       const label = {
+        30: "30分前通知",
         60: "1時間前通知",
         180: "3時間前通知",
         1440: "1日前通知",
@@ -871,6 +1058,11 @@
         10080: "1週間前通知"
       }[task.remindBefore] || "通知あり";
       return `<span class="badge remind">${label}</span>`;
+    }
+
+    function repeatBadge(task) {
+      if (!task.repeatType || task.repeatType === "none") return "";
+      return `<span class="badge repeat">繰り返し：${repeatLabel(task.repeatType)}</span>`;
     }
 
     function getFilteredTasks() {
@@ -884,6 +1076,8 @@
         list = list.filter(t => t.status !== "done" && daysUntil(t.dueDate) <= 0);
       } else if (currentTab === "active") {
         list = list.filter(t => t.status !== "done");
+      } else if (currentTab === "routine") {
+        list = list.filter(t => t.repeatType && t.repeatType !== "none");
       } else if (currentTab === "history") {
         list = list.filter(t => t.status === "done");
       }
@@ -947,6 +1141,12 @@
         const doneButton = task.status === "done"
           ? `<button class="ghost" onclick="reopenTask('${task.id}')">未完了に戻す</button>`
           : `<button class="ok" onclick="completeTask('${task.id}')">完了</button>`;
+        const skipButton = task.status !== "done" && task.repeatType && task.repeatType !== "none"
+          ? `<button class="ghost" onclick="skipToNext('${task.id}')">今回はスキップ</button>`
+          : "";
+        const deleteRoutineButton = task.status !== "done" && task.repeatType && task.repeatType !== "none"
+          ? `<button class="danger" onclick="deleteRoutineGroup('${task.id}')">習慣を停止</button>`
+          : "";
         const urgentClass = task.status !== "done" && daysUntil(task.dueDate) <= 0 ? " urgent" : "";
 
         const subtasksHtml = (task.subtasks && task.subtasks.length) ? `
@@ -970,6 +1170,7 @@
               <span class="badge">期限：${escapeHtml(task.dueDate)} ${escapeHtml(task.dueTime || "23:59")}</span>
               ${dueBadge(task)}
               ${reminderBadge(task)}
+              ${repeatBadge(task)}
             </div>
 
             <div class="progress-wrap">
@@ -985,8 +1186,10 @@
 
             <div class="task-actions">
               ${doneButton}
+              ${skipButton}
               <button class="secondary" onclick="editTask('${task.id}')">編集</button>
               <button class="danger" onclick="deleteTask('${task.id}')">削除</button>
+              ${deleteRoutineButton}
             </div>
           </article>
         `;
@@ -1070,7 +1273,7 @@
         try {
           const imported = JSON.parse(reader.result);
           if (!Array.isArray(imported)) throw new Error("Invalid format");
-          tasks = imported;
+          tasks = imported.map(normalizeTask);
           saveTasks();
           showFeedback("読み込みました。");
         } catch {
@@ -1085,7 +1288,9 @@
     window.completeTask = completeTask;
     window.reopenTask = reopenTask;
     window.deleteTask = deleteTask;
+    window.deleteRoutineGroup = deleteRoutineGroup;
     window.toggleSubtask = toggleSubtask;
+    window.skipToNext = skipToNext;
 
     loadTasks();
     render();
