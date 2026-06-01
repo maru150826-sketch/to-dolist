@@ -389,10 +389,90 @@
       transform: translateY(0);
       opacity: 1;
     }
+
+    body.compact-mode header,
+    body.compact-mode .stats,
+    body.compact-mode aside,
+    body.compact-mode .toolbar,
+    body.compact-mode .tab-buttons,
+    body.compact-mode .mini-actions,
+    body.compact-mode .footer-note,
+    body.compact-mode .quick-panel {
+      display: none !important;
+    }
+
+    body.compact-mode main {
+      padding: 10px;
+      max-width: 520px;
+    }
+
+    body.compact-mode .grid {
+      display: block;
+    }
+
+    body.compact-mode .panel {
+      box-shadow: none;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    body.compact-mode .task {
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    body.compact-mode .task-title {
+      font-size: 14px;
+    }
+
+    body.compact-mode .badge {
+      font-size: 10px;
+      padding: 4px 7px;
+    }
+
+    body.compact-mode .task-actions button {
+      font-size: 11px;
+      padding: 7px 9px;
+    }
+
+    .desktop-toggle {
+      position: fixed;
+      right: 14px;
+      top: 14px;
+      z-index: 30;
+      background: #172033;
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    body.compact-mode .desktop-toggle {
+      top: 8px;
+      right: 8px;
+      padding: 7px 10px;
+      font-size: 11px;
+    }
+
+    .compact-title {
+      display: none;
+    }
+
+    body.compact-mode .compact-title {
+      display: block;
+      font-size: 17px;
+      font-weight: 900;
+      margin: 0 0 10px;
+      letter-spacing: -0.03em;
+    }
+
+    body.compact-mode #focusCard {
+      margin-top: 28px;
+    }
+
   </style>
 </head>
 
 <body>
+  <button type="button" class="desktop-toggle" id="desktopModeButton">ミニ表示</button>
   <header>
     <div class="header-inner">
       <h1>Private ToDo Board</h1>
@@ -401,7 +481,7 @@
   </header>
 
   <main>
-    <section class="panel">
+    <section class="panel quick-panel">
       <h2>素早い入力</h2>
       <div class="quick-add">
         <input id="quickTitle" placeholder="例：TOEIC単語100語 / ITパスポート30問" />
@@ -577,6 +657,7 @@
           <button type="button" class="ghost" id="clearFocusButton">最重要を全解除</button>
         </div>
 
+        <h2 class="compact-title">今日やること</h2>
         <div id="focusCard"></div>
         <div id="taskList" class="task-list"></div>
 
@@ -1464,7 +1545,49 @@
     window.toggleFocus = toggleFocus;
     window.toggleSubtask = toggleSubtask;
 
+
+    function setTab(tabName) {
+      currentTab = tabName;
+      document.querySelectorAll("[data-tab]").forEach(button => {
+        button.classList.toggle("active", button.dataset.tab === tabName);
+      });
+      render();
+    }
+
+    function enableCompactMode() {
+      document.body.classList.add("compact-mode");
+      setTab("today");
+      $("desktopModeButton").textContent = "通常表示";
+      localStorage.setItem("privateTodoBoard.compactMode", "true");
+    }
+
+    function disableCompactMode() {
+      document.body.classList.remove("compact-mode");
+      $("desktopModeButton").textContent = "ミニ表示";
+      localStorage.setItem("privateTodoBoard.compactMode", "false");
+      render();
+    }
+
+    $("desktopModeButton").addEventListener("click", () => {
+      if (document.body.classList.contains("compact-mode")) {
+        disableCompactMode();
+      } else {
+        enableCompactMode();
+      }
+    });
+
+    function applyInitialCompactMode() {
+      const params = new URLSearchParams(location.search);
+      const urlWantsMini = params.get("mode") === "mini" || params.get("view") === "today";
+      const savedWantsMini = localStorage.getItem("privateTodoBoard.compactMode") === "true";
+      if (urlWantsMini || savedWantsMini) {
+        enableCompactMode();
+      }
+    }
+
+
     loadTasks();
+    applyInitialCompactMode();
     render();
     checkReminders();
   </script>
