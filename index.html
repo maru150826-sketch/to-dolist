@@ -1462,6 +1462,7 @@
             ${memo}
 
             <div class="task-actions">
+              ${isAlarmActiveForTask(task) ? `<button class="danger" onclick="stopAlarmForTask('${task.id}')">音を止める</button>` : ""}
               ${doneButton}
               ${skipButton}
               <button class="gold" onclick="toggleFocus('${task.id}')">${task.isFocus ? "最重要解除" : "最重要"}</button>
@@ -1613,12 +1614,19 @@
       panel.classList.add("show");
       panel.innerHTML = `
         リマインド中：${alarmTasks.map(task => escapeHtml(task.title)).join(" / ")}<br>
-        対象タスクの「音を止める」を押すまで鳴ります。
+        対象タスクの「音を止める」を押すまで鳴ります。<br>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          ${alarmTasks.map(task => `<button class="danger" onclick="stopAlarmForTask('${task.id}')">音を止める：${escapeHtml(task.title)}</button>`).join("")}
+        </div>
       `;
     }
 
+    function isAlarmActiveForTask(task) {
+      return activeAlarmTaskIds.has(task.id) && task.status !== "done";
+    }
+
     function alarmBadge(task) {
-      return activeAlarmTaskIds.has(task.id) && task.status !== "done"
+      return isAlarmActiveForTask(task)
         ? `<span class="badge alarming">リマインド音あり</span>`
         : "";
     }
