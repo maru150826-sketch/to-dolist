@@ -413,6 +413,9 @@
         <button type="button" class="secondary" onclick="addTemplate('TOEICリスニング30分', 'TOEIC', 'daily')">TOEICリスニング</button>
         <button type="button" class="secondary" onclick="addTemplate('TOEIC精読1題', 'TOEIC', 'daily')">TOEIC精読</button>
         <button type="button" class="secondary" onclick="addTemplate('ITパスポート過去問30問', 'ITパスポート', 'daily')">ITパスポート</button>
+        <button type="button" class="secondary" onclick="addTemplate('Duolingo英語', 'Duolingo', 'daily')">Duolingo英語</button>
+        <button type="button" class="secondary" onclick="addTemplate('Duolingo中国語', 'Duolingo', 'daily')">Duolingo中国語</button>
+        <button type="button" class="secondary" onclick="addTemplate('ジムに行く', '筋トレ', 'weekly')">ジム</button>
         <button type="button" class="secondary" onclick="addTemplate('大学課題の提出準備', '大学課題', 'none')">大学課題</button>
       </div>
       <p class="small-note">忘れる前に入れる欄です。毎日やるものはテンプレートか下の繰り返し設定を使ってください。</p>
@@ -444,6 +447,7 @@
                 <option>PC作業</option>
                 <option>TOEIC</option>
                 <option>ITパスポート</option>
+                <option>Duolingo</option>
                 <option>就活</option>
                 <option>筋トレ</option>
                 <option>生活</option>
@@ -940,10 +944,20 @@
               { id: uid(), title: "過去問を解く", done: false },
               { id: uid(), title: "間違えた用語をメモする", done: false }
             ]
-          : [
-              { id: uid(), title: "内容を確認する", done: false },
-              { id: uid(), title: "提出・完了する", done: false }
-            ];
+          : category === "Duolingo"
+            ? [
+                { id: uid(), title: "1レッスン以上進める", done: false },
+                { id: uid(), title: "間違えた表現を確認する", done: false }
+              ]
+            : category === "筋トレ"
+              ? [
+                  { id: uid(), title: "ジムに行く", done: false },
+                  { id: uid(), title: "トレーニング内容を記録する", done: false }
+                ]
+              : [
+                  { id: uid(), title: "内容を確認する", done: false },
+                  { id: uid(), title: "提出・完了する", done: false }
+                ];
 
       tasks.push({
         id: uid(),
